@@ -10,7 +10,10 @@ import argparse
 import sys
 from pathlib import Path
 
+from aidd_forge.commands.slash_router import SlashRouter
+from aidd_forge.core.git_hooks import GitHooksInstaller
 from aidd_forge.core.injector import Injector
+from aidd_forge.core.phase_fencer import PhaseFencer
 
 TEMPLATES_ROOT = Path(__file__).parent / "templates"
 
@@ -26,6 +29,16 @@ def cmd_init(args: argparse.Namespace) -> int:
     injector = Injector(TEMPLATES_ROOT, target, force=args.force)
     files_result = injector.run()
     links_result = injector.link_ide_rules(IDE_RULE_ALIASES)
+    skills_result = injector.link_skills()
+
+    fencer = PhaseFencer(TEMPLATES_ROOT, target, force=args.force)
+    fence_result = fencer.run()
+
+    router = SlashRouter(target, force=args.force)
+    router_result = router.run()
+
+    hooks = GitHooksInstaller(TEMPLATES_ROOT, target, force=args.force)
+    hooks_result = hooks.run()
 
     print(f"[aidd-forge] projeto alvo: {target}")
     print(f"[aidd-forge] arquivos criados: {len(files_result.created)}")
@@ -33,6 +46,16 @@ def cmd_init(args: argparse.Namespace) -> int:
     if files_result.overwritten:
         print(f"[aidd-forge] arquivos sobrescritos: {len(files_result.overwritten)}")
     print(f"[aidd-forge] regras de IDE vinculadas: {len(links_result.created)}")
+    print(f"[aidd-forge] skills vinculadas em .agent/skills/: {len(skills_result.created)}")
+    print(f"[aidd-forge] fases provisionadas: {len(fence_result.phases)}")
+    print(f"[aidd-forge] slash commands gravados: {len(router_result.created)}")
+    if router_result.intent_router_injected:
+        print("[aidd-forge] Intent Router injetado no AGENTS.md existente")
+    print(f"[aidd-forge] quality gates instalados: {len(hooks_result.gate_scripts)}")
+    if hooks_result.hook_installed:
+        print(f"[aidd-forge] hook pre-commit instalado em: {hooks_result.hook_path}")
+    elif hooks_result.skipped_reason:
+        print(f"[aidd-forge] hook pre-commit nao instalado: {hooks_result.skipped_reason}")
     return 0
 
 
