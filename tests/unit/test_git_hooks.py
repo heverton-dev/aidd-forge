@@ -10,6 +10,7 @@ EXPECTED_GATES = (
     "G_CYBERSECURITY_OWASP.py",
     "G_ESTRUTURA_AST.py",
     "G_HARNESS_COMPAT.py",
+    "G_INJECT.py",
     "G_PERFORMANCE.py",
     "G_TESTES_REAIS.py",
 )
@@ -24,7 +25,7 @@ def _init_git(target: Path) -> None:
     (target / ".git").mkdir(parents=True)
 
 
-# --- Templates reais: os 7 Quality Gates exigidos pela SPRINT 07 -----------
+# --- Templates reais: os Quality Gates exigidos pela SPRINT 07 + Injetor Universal ---
 
 
 def test_all_seven_gate_scripts_exist() -> None:

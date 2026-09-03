@@ -363,3 +363,86 @@ def test_performance_gate_fails_when_command_errors(tmp_path: Path) -> None:
     result = gate.scan(tmp_path)
 
     assert result.passed is False
+
+
+# --- G_INJECT -----------------------------------------------------------------
+
+
+def test_inject_gate_passes_when_nothing_was_injected(tmp_path: Path) -> None:
+    gate = _load_gate("G_INJECT.py")
+
+    result = gate.scan(tmp_path)
+
+    assert result.passed is True
+
+
+def test_inject_gate_passes_with_consistent_registry(tmp_path: Path) -> None:
+    gate = _load_gate("G_INJECT.py")
+    _write(tmp_path / "aidd_forge" / "mcps" / "demo.py", "def demo():\n    return 1\n")
+    _write(
+        tmp_path / "aidd_forge" / "mcps" / "registry.json",
+        '[{"nome": "demo", "descricao": "x", "path": "aidd_forge/mcps/demo.py"}]\n',
+    )
+
+    result = gate.scan(tmp_path)
+
+    assert result.passed is True
+
+
+def test_inject_gate_fails_when_registry_points_to_missing_file(tmp_path: Path) -> None:
+    gate = _load_gate("G_INJECT.py")
+    _write(
+        tmp_path / "aidd_forge" / "mcps" / "registry.json",
+        '[{"nome": "fantasma", "descricao": "x", "path": "aidd_forge/mcps/fantasma.py"}]\n',
+    )
+
+    result = gate.scan(tmp_path)
+
+    assert result.passed is False
+    assert any("fantasma" in msg for msg in result.messages)
+
+
+def test_inject_gate_fails_when_registry_points_to_stub(tmp_path: Path) -> None:
+    gate = _load_gate("G_INJECT.py")
+    _write(tmp_path / "aidd_forge" / "mcps" / "demo.py", "pass")
+    _write(
+        tmp_path / "aidd_forge" / "mcps" / "registry.json",
+        '[{"nome": "demo", "descricao": "x", "path": "aidd_forge/mcps/demo.py"}]\n',
+    )
+
+    result = gate.scan(tmp_path)
+
+    assert result.passed is False
+
+
+def test_inject_gate_passes_with_consistent_agents_md_table(tmp_path: Path) -> None:
+    gate = _load_gate("G_INJECT.py")
+    _write(tmp_path / "docs" / "rules" / "demo.md", "Regra real.\n")
+    _write(
+        tmp_path / "AGENTS.md",
+        "# AGENTS.md\n\n"
+        "## Componentes Injetados\n\n"
+        "| Tipo | Nome | Descricao | Caminho |\n"
+        "| --- | --- | --- | --- |\n"
+        "| rule | demo | Demo | docs/rules/demo.md |\n",
+    )
+
+    result = gate.scan(tmp_path)
+
+    assert result.passed is True
+
+
+def test_inject_gate_fails_when_agents_md_table_points_to_missing_path(tmp_path: Path) -> None:
+    gate = _load_gate("G_INJECT.py")
+    _write(
+        tmp_path / "AGENTS.md",
+        "# AGENTS.md\n\n"
+        "## Componentes Injetados\n\n"
+        "| Tipo | Nome | Descricao | Caminho |\n"
+        "| --- | --- | --- | --- |\n"
+        "| rule | demo | Demo | docs/rules/demo.md |\n",
+    )
+
+    result = gate.scan(tmp_path)
+
+    assert result.passed is False

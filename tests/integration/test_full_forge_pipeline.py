@@ -8,6 +8,7 @@ limpo — validando o ciclo completo descrito no plano de arquitetura
 (SPRINT 01 a SPRINT 07).
 """
 
+import json
 import shutil
 import subprocess
 from pathlib import Path
@@ -28,7 +29,8 @@ EXPECTED_PHASES = (
 )
 EXPECTED_GATES = (
     "G_BLOQUEAR_SEGREDOS.py", "G_CONTRACTS.py", "G_CYBERSECURITY_OWASP.py",
-    "G_ESTRUTURA_AST.py", "G_HARNESS_COMPAT.py", "G_PERFORMANCE.py", "G_TESTES_REAIS.py",
+    "G_ESTRUTURA_AST.py", "G_HARNESS_COMPAT.py", "G_INJECT.py", "G_PERFORMANCE.py",
+    "G_TESTES_REAIS.py",
 )
 
 
@@ -191,3 +193,57 @@ def test_forge_init_force_reinstalls_gates_and_hook(tmp_path: Path) -> None:
     assert exit_code == 0
     assert "old custom hook" not in hook_path.read_text(encoding="utf-8")
     assert "Quality Gates" in hook_path.read_text(encoding="utf-8")
+
+
+# --- Injetor Universal (Fase 6: prova de fogo) -------------------------------
+
+
+def test_forge_inject_creates_a_cybersecurity_skill_and_an_mcp_end_to_end(tmp_path: Path) -> None:
+    """Injeta uma skill de ciberseguranca e um MCP num projeto real, e confere
+    que o hook `pre-commit` real (com `G_INJECT.py` incluso) continua aprovando."""
+    target = tmp_path / "project"
+    _init_repo(target)
+    main(["init", str(target)])
+
+    skill_exit = main(
+        [
+            "inject",
+            "skill",
+            "seguranca-ciber",
+            "--descricao",
+            "Skill de auditoria de ciberseguranca",
+            "--conteudo",
+            "---\nname: seguranca-ciber\ndescription: Auditoria OWASP.\n---\n\n# Seguranca Ciber\n",
+            "--path",
+            str(target),
+        ]
+    )
+    mcp_exit = main(
+        [
+            "inject",
+            "mcp",
+            "meu-mcp",
+            "--descricao",
+            "MCP de exemplo",
+            "--conteudo",
+            "def handler():\n    return {\"ok\": True}\n",
+            "--path",
+            str(target),
+        ]
+    )
+
+    assert skill_exit == 0
+    assert mcp_exit == 0
+    assert (target / ".agent" / "skills" / "seguranca-ciber" / "SKILL.md").exists()
+    assert (target / "aidd_forge" / "mcps" / "meu-mcp.py").exists()
+
+    registry = json.loads((target / "aidd_forge" / "mcps" / "registry.json").read_text(encoding="utf-8"))
+    assert registry == [{"nome": "meu-mcp", "descricao": "MCP de exemplo", "path": "aidd_forge/mcps/meu-mcp.py"}]
+
+    _write(target / "app.py", "def add(a, b):\n    return a + b\n")
+    _git(["add", "-A"], cwd=target)
+    hook_path = target / ".git" / "hooks" / "pre-commit"
+    proc = subprocess.run(["sh", str(hook_path)], cwd=target, capture_output=True, text=True)
+
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "Todos os Quality Gates aprovados" in proc.stdout

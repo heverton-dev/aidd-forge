@@ -39,7 +39,15 @@ INTENT_ROUTER_SECTION = (
     "\n## Disparo por Linguagem Natural\n\n"
     "Se o usuario pedir, em linguagem natural, para \"preparar o ambiente\", "
     "\"configurar este projeto com aidd\" ou \"blindar as regras\", trate como "
-    "equivalente a `/forge`.\n"
+    "equivalente a `/forge`.\n\n"
+    "Se o usuario pedir, em linguagem natural, para injetar um novo componente, "
+    "trate como equivalente a `forge inject <tipo> <nome> --descricao \"...\" "
+    "--conteudo \"...\"`:\n"
+    "- \"crie uma skill de X\" / \"adicione uma skill para X\" -> `forge inject skill x`\n"
+    "- \"crie um mcp de X\" / \"adicione um mcp para X\" -> `forge inject mcp x`\n"
+    "- \"crie uma regra sobre X\" / \"nova regra de X\" -> `forge inject rule x`\n"
+    "- \"crie uma spec para X\" / \"escreva a spec de X\" -> `forge inject spec x`\n"
+    "- \"crie um roteiro de X\" / \"escreva um tutorial de X\" -> `forge inject roteiro x`\n"
 )
 
 

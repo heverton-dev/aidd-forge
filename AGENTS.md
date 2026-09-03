@@ -27,6 +27,14 @@ Para máxima economia de tokens e precisão técnica:
 
 - `/forge` ou `/aidd-init`: Executa o bootstrap determinístico via `python -m aidd_forge.cli init`.
 - Linguagem Natural: Intenções como *"prepare o ambiente"*, *"configure com aidd"* ou *"blinde as regras"* disparam a rotina de injeção automática.
+- **Injetor Universal de Componentes:** `forge inject <tipo> <nome> --descricao "..." (--conteudo "..." | --conteudo-file PATH) [--path PATH] [--force]`
+  materializa deterministicamente um novo componente no projeto alvo. Tipos suportados: `skill`, `mcp`,
+  `rule`, `spec`, `roteiro` (ver `aidd_forge/core/injector_profiles.py` para os destinos exatos). A
+  transação é atômica com rollback automático (`aidd_forge/core/materializador.py`), o `AGENTS.md` do
+  alvo e o catálogo `aidd_forge/mcps/registry.json` (quando aplicável) são atualizados, e o Quality Gate
+  `G_INJECT.py` valida que nenhum componente registrado seja órfão ou stub.
+  Linguagem Natural: *"crie uma skill de X"*, *"adicione um mcp de X"*, *"nova regra sobre X"*,
+  *"crie uma spec para X"* ou *"escreva um roteiro de X"* disparam o `forge inject` equivalente.
 
 ---
 
