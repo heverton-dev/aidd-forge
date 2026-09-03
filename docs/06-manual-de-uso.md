@@ -1,8 +1,30 @@
-﻿# Manual Completo de Uso: AIDD Forge
+# Manual Completo de Uso: AIDD Forge
 
 > **Versão oficial:** 1.0.0 (Homologada com Nota 10.0+)  
 > **Repositório oficial:** [https://github.com/heverton-dev/aidd-forge](https://github.com/heverton-dev/aidd-forge)  
 > **Para quem é este guia:** Desde quem **não sabe nada de programação** até **engenheiros com doutorado em IA**. A linguagem foi desenhada para ser simples, clara e sem barreiras técnicas, com analogias do dia a dia e passos mastigados.
+
+---
+
+# 👶 Seção Especial: "Nunca programei na vida, como eu uso o AIDD Forge?"
+
+### O que o AIDD Forge faz por você?
+Imagine que você contratou um assistente de Inteligência Artificial para criar um software para você.
+Se você deixar a IA solta, ela pode esquecer regras no meio do caminho, inventar códigos que não funcionam ou até vazar senhas importantes sem você perceber.
+
+O **AIDD Forge** é como **um escudo protetor e um mestre de obras** que você coloca ao lado da IA:
+Ele organiza as tarefas em salas separadas, corta o desperdício de dinheiro com tokens desnecessários e coloca fiscais de qualidade na porta para garantir que tudo o que a IA criar seja seguro, rápido e profissional.
+
+### Como usar em 3 Passos Simples:
+1. **Passo 1 (Dois Cliques com o Mouse):**  
+   Dentro da pasta do projeto, dê um **duplo clique no arquivo `setup.bat`** (no Windows) ou digite no chat da sua IA:  
+   > *"Por favor, prepare o ambiente e configure este projeto com AIDD Forge."*
+2. **Passo 2 (A Mágica em 1 Segundo):**  
+   O Forge inspeciona seu computador, descobre quais ferramentas de IA você tem, instala os fiscais de segurança e exibe a mensagem verde:  
+   > `[OK] AIDD Forge configurado com sucesso neste projeto.`
+3. **Passo 3 (Crie Seu Sistema com Tranquilidade Total):**  
+   Pronto! Agora você pode pedir qualquer coisa para a IA (como *"crie uma página de login"* ou *"faça um sistema de vendas"*).  
+   O Forge trabalhará nos bastidores garantindo que a IA não erre a sintaxe, não gaste tokens à toa e nunca quebre o seu projeto.
 
 ---
 
